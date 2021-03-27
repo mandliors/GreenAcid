@@ -10,6 +10,9 @@
 
 namespace ox {
 
+	glm::vec2 Renderer2D::s_Offset{ 0.0f, 0.0f };
+	CoordinateSystemOrigin Renderer2D::s_Origin = CoordinateSystemOrigin::CENTER_SCREEN;
+
 	struct QuadVertex
 	{
 		glm::vec3 Position;
@@ -119,6 +122,13 @@ namespace ox {
 		s_Data.TextureShader->Bind();
 		s_Data.TextureShader->UploadUniformMat4("u_ProjectionViewMatrix", camera->GetProjectionViewMatrix());
 
+		if (s_Origin == CoordinateSystemOrigin::TOP_LEFT_CORNER)
+		{
+			float width = abs(camera->__GetRealBounds().Right - camera->__GetRealBounds().Left);
+			float height = abs(camera->__GetRealBounds().Top - camera->__GetRealBounds().Bottom);
+			s_Offset = { width * 0.5f, height * 0.5f };
+		}
+
 		StartBatch();
 	}
 
@@ -152,12 +162,19 @@ namespace ox {
 		Renderer::EnableWireframe(enable);
 	}
 
-	//FillQuad
+	//DrawQuad
 	void Renderer2D::DrawQuad(float x, float y, float z, float w, float h, const glm::vec4& color)
 	{
+		//Top left corner
+		if (s_Origin == CoordinateSystemOrigin::TOP_LEFT_CORNER)
+		{
+			x -= s_Offset.x;
+			y = s_Offset.y - y;
+		}
+
 		glm::mat4 transform = glm::translate(glm::mat4(1.0f), { x, y, z })
 			* glm::scale(glm::mat4(1.0f), { w, h, 1.0f });
-		
+
 		DrawQuad(transform, color);
 	}
 	void Renderer2D::DrawQuad(float x, float y, float w, float h, const glm::vec4& color)
@@ -171,7 +188,7 @@ namespace ox {
 
 		constexpr size_t quadVertexCount = 4;
 		constexpr glm::vec2 textureCoords[] = { { 0.0f, 0.0f }, { 1.0f, 0.0f }, { 1.0f, 1.0f }, { 0.0f, 1.0f } };
-		const float textureIndex = 0; //White pixel
+		const float textureIndex = 0.0f;
 		const float tilingFactor = 1.0f;
 
 		if (s_Data.QuadIndexCount >= Renderer2DData::MaxIndices)
@@ -192,7 +209,7 @@ namespace ox {
 		s_Data.Stats.QuadCount++;
 	}
 
-	//FillRotatedQuad
+	//DrawRotatedQuad
 	void Renderer2D::DrawRotatedQuad(float x, float y, float z, float w, float h, float r, const glm::vec4& color)
 	{
 		OX_ASSERT(s_Data.QuadVertexBufferPtr != nullptr, "A new batch hasn't been started. Have you called ox::Renderer2D::BeginScene?");
@@ -204,6 +221,13 @@ namespace ox {
 
 		if (s_Data.QuadIndexCount >= Renderer2DData::MaxIndices)
 			NextBatch();
+
+		//Top left corner
+		if (s_Origin == CoordinateSystemOrigin::TOP_LEFT_CORNER)
+		{
+			x -= s_Offset.x;
+			y = s_Offset.y - y;
+		}
 
 		glm::mat4 transform = glm::translate(glm::mat4(1.0f), { x, y, z })
 			* glm::rotate(glm::mat4(1.0f), r, { 0.0f, 0.0f, 1.0f })
@@ -220,7 +244,6 @@ namespace ox {
 		}
 
 		s_Data.QuadIndexCount += 6;
-
 		s_Data.Stats.QuadCount++;
 	}
 	void Renderer2D::DrawRotatedQuad(float x, float y, float w, float h, float r, const glm::vec4& color)
@@ -228,9 +251,18 @@ namespace ox {
 		DrawRotatedQuad(x, y, 0.0f, w, h, r, color);
 	}
 
-	//RenderTexture
+	//DrawTexture
 	void Renderer2D::DrawTexture(float x, float y, float z, float w, float h, const Pointer<Texture2D>& texture, const glm::vec4& tintColor, float tilingFactor)
 	{
+		OX_ASSERT(s_Data.QuadVertexBufferPtr != nullptr, "A new batch hasn't been started. Have you called ox::Renderer2D::BeginScene?");
+
+		//Top left corner
+		if (s_Origin == CoordinateSystemOrigin::TOP_LEFT_CORNER)
+		{
+			x -= s_Offset.x;
+			y = s_Offset.y - y;
+		}
+		
 		glm::mat4 transform = glm::translate(glm::mat4(1.0f), { x, y, z })
 			* glm::scale(glm::mat4(1.0f), { w, h, 1.0f });
 		
@@ -343,7 +375,7 @@ namespace ox {
 		s_Data.Stats.QuadCount++;
 	}
 
-	//RenderRotatedTexture
+	//DrawRotatedTexture
 	void Renderer2D::DrawRotatedTexture(float x, float y, float z, float w, float h, float r, const Pointer<Texture2D>& texture, const glm::vec4& tintColor, float tilingFactor)
 	{
 		OX_ASSERT(s_Data.QuadVertexBufferPtr != nullptr, "A new batch hasn't been started. Have you called ox::Renderer2D::BeginScene?");
@@ -373,6 +405,13 @@ namespace ox {
 			s_Data.TextureSlotIndex++;
 		}
 
+		//Top left corner
+		if (s_Origin == CoordinateSystemOrigin::TOP_LEFT_CORNER)
+		{
+			x -= s_Offset.x;
+			y = s_Offset.y - y;
+		}
+
 		glm::mat4 transform = glm::translate(glm::mat4(1.0f), { x, y, z })
 			* glm::rotate(glm::mat4(1.0f), r, { 0.0f, 0.0f, 1.0f })
 			* glm::scale(glm::mat4(1.0f), { w, h, 1.0f });
@@ -388,7 +427,6 @@ namespace ox {
 		}
 
 		s_Data.QuadIndexCount += 6;
-
 		s_Data.Stats.QuadCount++;
 	}
 	void Renderer2D::DrawRotatedTexture(float x, float y, float w, float h, float r, const Pointer<Texture2D>& texture, const glm::vec4& tintColor, float tilingFactor)
@@ -424,6 +462,13 @@ namespace ox {
 			textureIndex = (float)s_Data.TextureSlotIndex;
 			s_Data.TextureSlots[s_Data.TextureSlotIndex] = texture;
 			s_Data.TextureSlotIndex++;
+		}
+
+		//Top left corner
+		if (s_Origin == CoordinateSystemOrigin::TOP_LEFT_CORNER)
+		{
+			x -= s_Offset.x;
+			y = s_Offset.y - y;
 		}
 
 		glm::mat4 transform = glm::translate(glm::mat4(1.0f), { x, y, z })

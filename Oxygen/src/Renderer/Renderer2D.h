@@ -18,6 +18,8 @@ namespace ox {
 		static void Flush();
 
 		static void EnableWireframe(bool enable);
+		static void SetCoordinateSystemOrigin(CoordinateSystemOrigin origin) { s_Origin = origin; }
+		static CoordinateSystemOrigin GetCoordinateSystemOrigin() { return s_Origin; }
 
 		//Primitives
 		static void DrawQuad(float x, float y, float z, float w, float h, const glm::vec4& color);
@@ -57,5 +59,9 @@ namespace ox {
 		static void __Shutdown();
 		static void StartBatch();
 		static void NextBatch();
+
+	private:
+		static glm::vec2 s_Offset;
+		static CoordinateSystemOrigin s_Origin;
 	};
 }

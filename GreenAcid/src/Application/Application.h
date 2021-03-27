@@ -1,5 +1,9 @@
 #pragma once
 
+#include "../Base/Defines.h"
+#ifdef PYTHON_INTERPRETER
+	#include <C:/Users/mandl/AppData/Local/Programs/Python/Python39/include/Python.h>
+#endif
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>

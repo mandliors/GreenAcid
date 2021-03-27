@@ -88,6 +88,11 @@ namespace GreenAcid {
 		squareGameObject = s_ActiveScene->CreateGameObject("Square");
 		squareGameObject.AddComponent<SpriteRenderer>(glm::vec4{ 0.0f, 1.0f, 0.0f, 1.0f });
 
+#ifdef PYTHON_INTERPRETER
+		Py_SetProgramName(L"IntegratedPython");
+		Py_Initialize();
+#endif
+
 		if (s_Descriptor.Start) s_Descriptor.Start();
 	}
 
@@ -178,8 +183,9 @@ namespace GreenAcid {
 			s_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
 			s_Framebuffer->Resize((uint32_t)s_ViewportSize.x, (uint32_t)s_ViewportSize.y);
 
-			s_Camera->Resize(viewportPanelSize.x, viewportPanelSize.y);
+			s_Camera->Resize(viewportPanelSize.x / viewportPanelSize.y);
 		}
+		s_Camera->Resize(viewportPanelSize.x / viewportPanelSize.y);
 		ImGui::Image((void*)s_Framebuffer->GetColorAttachmentRendererID(), ImVec2{ s_ViewportSize.x, s_ViewportSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
 		ImGui::End();
 		ImGui::PopStyleVar();
@@ -193,7 +199,7 @@ namespace GreenAcid {
 		ImGui::Text("Vertex Count: %d", stats.GetTotalVertexCount());
 		ImGui::Text("Index Count: %d", stats.GetTotalIndexCount());
 		ImGui::Text("FPS: %f", GetFPS());
-		
+
 		if (squareGameObject)
 		{
 			ImGui::Separator();
@@ -205,10 +211,20 @@ namespace GreenAcid {
 		}
 
 		ImGui::End();
+
+#ifdef PYTHON_INTERPRETER
+		static PythonConsole console;
+		static bool p_open = true;
+		console.Draw("Python interpreter", &p_open);
+#endif
 	}
 
 	void Application::OnShutdown()
 	{
+#ifdef PYTHON_INTERPRETER
+		Py_FinalizeEx();
+#endif
+
 		if (s_Descriptor.Shutdown) s_Descriptor.Shutdown();
 	}
 }

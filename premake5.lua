@@ -13,6 +13,7 @@ workspace "GreenAcid"
 		location "GreenAcid"
 		kind "ConsoleApp"
 		language "C++"
+        cppdialect "C++17"
 
 		targetdir ("bin/" .. outputdir)
 		objdir ("obj/" .. outputdir)
@@ -27,33 +28,63 @@ workspace "GreenAcid"
 			"Oxygen/src/**.cpp"
 		}
 
-		includedirs
-		{
-			"Dependencies/include",
-			"Oxygen/src",
-			"%{wks.name}/src"
-		}
-
-		libdirs
-		{
-			"Dependencies/lib"
-		}
-
-		links
-		{
-			"glfw3",
-			"opengl32"
-		}
+		filter "system:windows"
+			includedirs
+			{
+				"WindowsDependencies/include",
+				"Oxygen/src",
+				"%{wks.name}/src"
+			}
+			libdirs
+			{
+				"WindowsDependencies/lib"
+			}
+		
+		filter "system:linux"
+			includedirs
+			{
+				"LinuxDependencies/include",
+				"Oxygen/src",
+				"%{wks.name}/src"
+			}
 
 		filter "system:windows"
-			cppdialect "C++17"
-			staticruntime "Off"
 			systemversion "latest"
-
 			defines
 			{
 				"_CONSOLE"
+			}			
+			links
+			{
+				"glfw3",
+				"opengl32"
 			}
+
+		filter "system:linux"
+			systemversion "latest"
+			defines
+			{
+				"_CONSOLE"
+			}	
+			links
+			{
+				"glfw3",
+				"GL",
+				"GLU",
+				"dl",
+				"X11",
+				"Xxf86vm",
+				"pthread",
+				"Xi"
+			}
+			--buildoptions  --FOR DEBUGGING PURPOSES
+			--{
+			--	"-O0",
+			--	"-g3",
+			--	"-ggdb3",
+			--	"-fno-inline",
+            --  "-Wall"
+			--}
 
 		filter "configurations:Debug"
 			defines "_DEBUG"
@@ -69,6 +100,7 @@ workspace "GreenAcid"
 		location "Oxygen"
 		kind "StaticLib"
 		language "C++"
+        cppdialect "C++17"
 
 		targetdir ("bin/" .. outputdir .. "/%{prj.name}")
 		objdir ("obj/" .. outputdir .. "/%{prj.name}")
@@ -80,17 +112,38 @@ workspace "GreenAcid"
 			"%{prj.name}/src/**.cpp"
 		}
 
-		includedirs
-		{
-			"Dependencies/include",
-			"%{prj.name}/src"
-		}
-
 		filter "system:windows"
-			cppdialect "C++17"
-			staticruntime "Off"
 			systemversion "latest"
-
+			includedirs
+			{
+				"WindowsDependencies/include",
+				"%{prj.name}/src"
+			}
+			defines
+			{
+				"WINDOWS"
+			}
+			
+		filter "system:linux"
+			systemversion "latest"
+			includedirs
+			{
+				"LinuxDependencies/include",
+				"%{prj.name}/src"
+			}
+			defines
+			{
+				"LINUX"
+			}
+			--buildoptions  --FOR DEBUGGING PURPOSES
+			--{
+			--	"-O0",
+			--	"-g3",
+			--	"-ggdb3",
+			--	"-fno-inline",
+            --  "-Wall"
+			--}
+		
 		filter "configurations:Debug"
 			defines "OX_DEBUG"
 			symbols "On"
