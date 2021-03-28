@@ -1,12 +1,17 @@
 #include "VertexArray.h"
-#include "../GameWindow/GameWindow.h"
+#include "Base/Defines.h"
+#include "GameWindow/GameWindow.h"
 #include <glad/glad.h>
 
 namespace ox {
 
 	VertexArray::VertexArray()
 	{
+	#ifdef OPENGL_45_OR_MORE
 		glCreateVertexArrays(1, &m_RendererID);
+	#else
+		glGenVertexArrays(1, &m_RendererID);
+	#endif
 	}
 
 	VertexArray::~VertexArray()

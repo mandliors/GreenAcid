@@ -1,6 +1,6 @@
 #include "OpenGLContext.h"
-#include "../Base/Base.h"
-#include "../Debug/Debug.h"
+#include "Base/Base.h"
+#include "Debug/Debug.h"
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>

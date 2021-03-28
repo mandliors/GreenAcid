@@ -1,5 +1,5 @@
 #include "Texture2D.h"
-#include "../Base/Base.h"
+#include "Base/Defines.h"
 #include <stb_image/stb_image.h>
 
 namespace ox {
@@ -31,16 +31,29 @@ namespace ox {
 		m_InternalFormat = internalFormat;
 		m_DataFormat = dataFormat;
 
+	#ifdef OPENGL_45_OR_MORE
 		glCreateTextures(GL_TEXTURE_2D, 1, &m_RendererID);
-		glTextureStorage2D(m_RendererID, 1, internalFormat, m_Width, m_Height);
-
+		
+		glTextureStorage2D(m_RendererID, 1, m_InternalFormat, m_Width, m_Height);
 		glTextureParameteri(m_RendererID, GL_TEXTURE_MIN_FILTER, (GLint)minificationFiltering);
 		glTextureParameteri(m_RendererID, GL_TEXTURE_MAG_FILTER, (GLint)magnificationFiltering);
-
 		glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_S, GL_REPEAT);
 		glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
 		glTextureSubImage2D(m_RendererID, 0, 0, 0, m_Width, m_Height, dataFormat, GL_UNSIGNED_BYTE, data);
+	#else
+		glGenTextures(1, &m_RendererID);
+		
+		glBindTexture(GL_TEXTURE_2D, m_RendererID);
+		glTexStorage2D(GL_TEXTURE_2D, 1, m_InternalFormat, m_Width, m_Height);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, (GLint)minificationFiltering);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, (GLint)magnificationFiltering);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);		
+		glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, m_Width, m_Height, dataFormat, GL_UNSIGNED_BYTE, data);
+
+		glBindTexture(GL_TEXTURE_2D, 0);
+	#endif
 
 		stbi_image_free(data);
 	}
@@ -51,16 +64,29 @@ namespace ox {
 		m_InternalFormat = GL_RGBA8;
 		m_DataFormat = GL_RGBA;
 
+	#ifdef OPENGL_45_OR_MORE
 		glCreateTextures(GL_TEXTURE_2D, 1, &m_RendererID);
-		glTextureStorage2D(m_RendererID, 1, m_InternalFormat, m_Width, m_Height);
 
+		glTextureStorage2D(m_RendererID, 1, m_InternalFormat, m_Width, m_Height);
 		glTextureParameteri(m_RendererID, GL_TEXTURE_MIN_FILTER, (GLint)minificationFiltering);
 		glTextureParameteri(m_RendererID, GL_TEXTURE_MAG_FILTER, (GLint)magnificationFiltering);
-
 		glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_S, GL_REPEAT);
 		glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
 		glTextureSubImage2D(m_RendererID, 0, 0, 0, m_Width, m_Height, m_DataFormat, GL_UNSIGNED_BYTE, data);
+	#else
+		glGenTextures(1, &m_RendererID);
+
+		glBindTexture(GL_TEXTURE_2D, m_RendererID);
+		glTexStorage2D(GL_TEXTURE_2D, 1, m_InternalFormat, m_Width, m_Height);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, (GLint)minificationFiltering);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, (GLint)magnificationFiltering);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, m_Width, m_Height, m_DataFormat, GL_UNSIGNED_BYTE, data);
+
+		glBindTexture(GL_TEXTURE_2D, 0);		
+	#endif
 	}
 
 	Texture2D::~Texture2D()
@@ -80,7 +106,12 @@ namespace ox {
 
 	void Texture2D::Bind(uint32_t slot) const
 	{
+	#ifdef OPENGL_45_OR_MORE
 		glBindTextureUnit(slot, m_RendererID);
+	#else
+		glActiveTexture(GL_TEXTURE0 + slot);
+		glBindTexture(GL_TEXTURE_2D, m_RendererID);
+	#endif
 	}
 
 }

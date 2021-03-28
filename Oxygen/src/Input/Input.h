@@ -1,9 +1,9 @@
 #pragma once
 
-#include "../Base/KeyCodes.h"
-#include "../Base/MouseButtonCodes.h"
-#include "../Math/Math.h"
-#include "../Events/Event.h"
+#include "Base/KeyCodes.h"
+#include "Base/MouseButtonCodes.h"
+#include "Math/Math.h"
+#include "Events/Event.h"
 #include <map>
 
 namespace ox {

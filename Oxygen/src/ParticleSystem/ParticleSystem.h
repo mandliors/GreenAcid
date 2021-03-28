@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../Time/Time.h"
-#include "../Renderer/OrthographicCamera.h"
+#include "Time/Time.h"
+#include "Renderer/OrthographicCamera.h"
 #include <vector>
 
 namespace ox {

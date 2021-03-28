@@ -1,9 +1,9 @@
 #pragma once
 
 #include "OrthographicCamera.h"
-#include "../Events/Event.h"
-#include "../Events/MouseEvent.h"
-#include "../Events/WindowEvent.h"
+#include "Events/Event.h"
+#include "Events/MouseEvent.h"
+#include "Events/WindowEvent.h"
 #include <glm/glm.hpp>
 #include <vector>
 

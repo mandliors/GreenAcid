@@ -1,7 +1,7 @@
 #include "OrthographicCameraController.h"
 #include "Renderer2D.h"
-#include "../Input/Input.h"
-#include "../Base/KeyCodes.h"
+#include "Input/Input.h"
+#include "Base/KeyCodes.h"
 
 namespace ox {
 

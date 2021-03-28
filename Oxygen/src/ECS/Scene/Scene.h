@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../../Vendor/entt/entt.hpp"
-#include "../Components/Components.h"
+#include "Vendor/EnTT/entt.hpp"
+#include "ECS/Components/Components.h"
 
 namespace GreenAcid { class Application; }
 

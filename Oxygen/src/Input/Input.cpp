@@ -1,8 +1,9 @@
 #include "Input.h"
-#include "../GameWindow/GameWindow.h"
-#include "../Events/WindowEvent.h"
-#include "../Events/KeyEvent.h"
-#include "../Events/MouseEvent.h"
+#include "GameWindow/GameWindow.h"
+#include "Events/WindowEvent.h"
+#include "Events/KeyEvent.h"
+#include "Events/MouseEvent.h"
+#include <cstring>
 
 namespace ox {
 

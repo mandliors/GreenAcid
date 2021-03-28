@@ -1,18 +1,19 @@
 #include "GameWindow.h"
-#include "../Base/Base.h"
-#include "../Base/KeyCodes.h"
-#include "../Base/MouseButtonCodes.h"
-#include "../Renderer/OpenGLContext.h"
-#include "../Renderer/Renderer.h"
-#include "../Renderer/Renderer2D.h"
-#include "../Events/EventManager.h"
-#include "../Input/Input.h"
-#include "../Time/Time.h"
-#include "../Debug/Debug.h"
-#include "../Random/Random.h"
-#include "../ImGui/imgui_impl_opengl3.h"
-#include "../ImGui/ImGuiLayer.h"
-#include "../Vendor/stb_image/stb_image.h"
+#include "Base/Base.h"
+#include "Base/Defines.h"
+#include "Base/KeyCodes.h"
+#include "Base/MouseButtonCodes.h"
+#include "Renderer/OpenGLContext.h"
+#include "Renderer/Renderer.h"
+#include "Renderer/Renderer2D.h"
+#include "Events/EventManager.h"
+#include "Input/Input.h"
+#include "Time/Time.h"
+#include "Debug/Debug.h"
+#include "Random/Random.h"
+#include "ImGui/imgui_impl_opengl3.h"
+#include "ImGui/ImGuiLayer.h"
+#include "Vendor/stb_image/stb_image.h"
 
 namespace ox {
 
@@ -22,6 +23,19 @@ namespace ox {
 	static void GLFWErrorCallback(int error, const char* description)
 	{
 		std::cerr << "GLFW Error: " << error << ": " << description << std::endl;
+	}
+
+	void GLAPIENTRY MessageCallback( GLenum source,
+									 GLenum type,
+									 GLuint id,
+									 GLenum severity,
+									 GLsizei length,
+									 const GLchar* message,
+									 const void* userParam )
+	{
+  		fprintf( stderr, "GL CALLBACK: %s type = 0x%x, severity = 0x%x, message = %s\n",
+           ( type == GL_DEBUG_TYPE_ERROR ? "** GL ERROR **" : "" ),
+            type, severity, message );
 	}
 
 	GameWindow::GameWindow(const WindowDescriptor& descriptor)
@@ -41,9 +55,15 @@ namespace ox {
 			glfwSetErrorCallback(GLFWErrorCallback);
 			s_GLFWInitialized = true;
 		}
+	#ifdef OPENGL_45_OR_MORE
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	#else
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	#endif
 
 		//GLFW window
 		m_Handle = glfwCreateWindow((int)m_Descriptor.Width, (int)m_Descriptor.Height, m_Descriptor.Title.c_str(), NULL, NULL);
@@ -136,6 +156,9 @@ namespace ox {
 		{
 			EventManager::__EmplaceEvent<MouseMovedEvent>((float)xPos, (float)yPos);
 		});
+
+		glEnable(GL_DEBUG_OUTPUT);
+		glDebugMessageCallback( MessageCallback, 0 );
 
 		//Initialize other classes
 		EventManager::__Init();

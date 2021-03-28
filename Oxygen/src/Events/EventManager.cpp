@@ -1,7 +1,7 @@
 #include "EventManager.h"
-#include "../GameWindow/GameWindow.h"
-#include "../ImGui/ImGuiLayer.h"
-#include "../Renderer/OrthographicCameraController.h"
+#include "GameWindow/GameWindow.h"
+#include "ImGui/ImGuiLayer.h"
+#include "Renderer/OrthographicCameraController.h"
 
 namespace ox {
 

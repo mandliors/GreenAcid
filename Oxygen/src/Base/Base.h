@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <assert.h>
+#include <memory>
 
 #ifdef OXYGEN_DEBUG
 #define OX_ASSERT(condition, message) \

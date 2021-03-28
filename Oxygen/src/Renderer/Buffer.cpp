@@ -1,4 +1,5 @@
-#include "../Base/Base.h"
+#include "Base/Base.h"
+#include "Base/Defines.h"
 #include "Buffer.h"
 #include <glad/glad.h>
 
@@ -9,14 +10,22 @@ namespace ox {
 	///////////////////////////////////////////////////////////////////////
 	VertexBuffer::VertexBuffer(float* vertices, uint32_t size)
 	{
+	#ifdef OPENGL_45_OR_MORE
 		glCreateBuffers(1, &m_RendererID);
+	#else
+		glGenBuffers(1, &m_RendererID);
+	#endif
 		glBindBuffer(GL_ARRAY_BUFFER, m_RendererID);
 		glBufferData(GL_ARRAY_BUFFER, size, vertices, GL_STATIC_DRAW);
 	}
 
 	VertexBuffer::VertexBuffer(uint32_t size)
 	{
+	#ifdef OPENGL_45_OR_MORE
 		glCreateBuffers(1, &m_RendererID);
+	#else
+		glGenBuffers(1, &m_RendererID);
+	#endif
 		glBindBuffer(GL_ARRAY_BUFFER, m_RendererID);
 		glBufferData(GL_ARRAY_BUFFER, size, nullptr, GL_DYNAMIC_DRAW);
 	}
@@ -58,7 +67,11 @@ namespace ox {
 	IndexBuffer::IndexBuffer(uint32_t* vertices, uint32_t count)
 		: m_Count(count)
 	{
+	#ifdef OPENGL_45_OR_MORE
 		glCreateBuffers(1, &m_RendererID);
+	#else
+		glGenBuffers(1, &m_RendererID);
+	#endif
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_RendererID);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, count * sizeof(uint32_t), vertices, GL_STATIC_DRAW);
 	}

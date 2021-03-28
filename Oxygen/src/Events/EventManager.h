@@ -4,10 +4,11 @@
 #include "WindowEvent.h"
 #include "KeyEvent.h"
 #include "MouseEvent.h"
-#include "../Input/Input.h"
-#include "../Debug/Debug.h"
+#include "Debug/Debug.h"
+#include "Input/Input.h"
 #include <queue>
 #include <functional>
+#include <memory>
 
 namespace ox {
 

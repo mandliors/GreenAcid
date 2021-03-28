@@ -1,4 +1,4 @@
-#include "../Base/Base.h"
+#include "Base/Base.h"
 #include "Renderer2D.h"
 #include "Renderer.h"
 #include "Shader.h"
@@ -7,6 +7,7 @@
 #include "VertexArray.h"
 #include <glm/gtc/matrix_transform.hpp>
 #include <array>
+#include <cstring>
 
 namespace ox {
 

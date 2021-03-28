@@ -50,10 +50,6 @@ workspace "GreenAcid"
 
 		filter "system:windows"
 			systemversion "latest"
-			defines
-			{
-				"_CONSOLE"
-			}			
 			links
 			{
 				"glfw3",
@@ -61,11 +57,7 @@ workspace "GreenAcid"
 			}
 
 		filter "system:linux"
-			systemversion "latest"
-			defines
-			{
-				"_CONSOLE"
-			}	
+			systemversion "latest"	
 			links
 			{
 				"glfw3",
@@ -83,7 +75,7 @@ workspace "GreenAcid"
 			--	"-g3",
 			--	"-ggdb3",
 			--	"-fno-inline",
-            --  "-Wall"
+            --	"-Wall"
 			--}
 
 		filter "configurations:Debug"
@@ -141,7 +133,7 @@ workspace "GreenAcid"
 			--	"-g3",
 			--	"-ggdb3",
 			--	"-fno-inline",
-            --  "-Wall"
+            --	"-Wall"
 			--}
 		
 		filter "configurations:Debug"

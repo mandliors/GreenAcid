@@ -1,13 +1,13 @@
 #pragma once
 
-#include "../Scene/Scene.h"
-#include "../../Vendor/EnTT/entt.hpp"
+#include "ECS/Scene/Scene.h"
+#include "Vendor/EnTT/entt.hpp"
 
 namespace ox {
 
 	class GameObject
 	{
-	public: 
+	public:
 		GameObject() = default;
 		GameObject(entt::entity handle, Scene* scene)
 			: m_EntityHandle(handle), m_Scene(scene) { }

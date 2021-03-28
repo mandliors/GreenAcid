@@ -1,9 +1,9 @@
 #pragma once
 
-#include "../Base/Base.h"
+#include <glad/glad.h>
+#include "Base/Base.h"
 #include <string>
 #include <memory>
-#include <glad/glad.h>
 
 namespace ox {
 

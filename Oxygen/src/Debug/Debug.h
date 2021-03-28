@@ -1,9 +1,13 @@
 #pragma once
 
+#define LINUX
+
 #include <iostream>
 #include <string>
 #include <ctime>
-#include <Windows.h>
+
+#ifdef WINDOWS
+	#include <Windows.h>
 
 namespace ox {
 
@@ -116,3 +120,93 @@ namespace ox {
 		}
 	};
 }
+#endif
+
+#ifdef LINUX
+namespace ox {
+
+	class Debug
+	{
+		friend class GameWindow;
+		friend class EventManager;
+
+	public:
+		Debug() = delete;
+		~Debug() = default;
+
+		enum class LOG_LEVEL
+		{
+			__LOG_LEVEL_ENGINE = 0, LOG_LEVEL_INFO, LOG_LEVEL_WARNING, LOG_LEVEL_ERROR
+		};
+		
+		template<typename T, typename... Args>
+		static void Log(T message, const Args&... rest)
+		{
+			if (s_LogLevel <= LOG_LEVEL::LOG_LEVEL_INFO)
+			{
+				std::cout << "INFO: " << message;
+				__PRINT(rest...);
+			}
+		}
+		template<typename T, typename... Args>
+		static void Info(T message, const Args&... rest)
+		{
+			if (s_LogLevel <= LOG_LEVEL::LOG_LEVEL_INFO)
+			{
+				std::cout << "INFO: " << message;
+				__PRINT(rest...);
+			}
+		}
+		template<typename T, typename... Args>
+		static void Grat(T message, const Args&... rest)
+		{
+			if (s_LogLevel <= LOG_LEVEL::LOG_LEVEL_INFO)
+			{
+				std::cout << "GRAT: " << message;
+				__PRINT(rest...);
+			}
+		}
+		template<typename T, typename... Args>
+		static void Warn(T message, const Args&... rest)
+		{
+			if (s_LogLevel <= LOG_LEVEL::LOG_LEVEL_WARNING)
+			{
+				std::cout << "WARNING: " << message;
+				__PRINT(rest...);
+			}
+		}
+		template<typename T, typename... Args>
+		static void Error(T message, const Args&... rest)
+		{
+			if (s_LogLevel <= LOG_LEVEL::LOG_LEVEL_ERROR)
+			{
+				std::cout << "ERROR: " << message;
+				__PRINT(rest...);
+			}
+		}
+		static void SetLogLevel(LOG_LEVEL level);
+	private:
+		static LOG_LEVEL s_LogLevel;
+
+		template<typename T, typename... Args>
+		static void __ENGINE_LOG(T message, const Args&... rest)
+		{
+			if (s_LogLevel <= LOG_LEVEL::__LOG_LEVEL_ENGINE)
+			{
+				std::cout << "INFO: " << message;
+				__PRINT(rest...);
+			}
+		}
+		static void __PRINT()
+		{
+			std::cout << std::endl;
+		}
+		template<typename T, typename... Values>
+		static void __PRINT(T message, const Values&... rest)
+		{
+			std::cout << message;
+			__PRINT(rest...);
+		}
+	};
+}
+#endif
