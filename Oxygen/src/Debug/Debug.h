@@ -1,7 +1,5 @@
 #pragma once
 
-#define LINUX
-
 #include <iostream>
 #include <string>
 #include <ctime>

@@ -25,6 +25,7 @@ namespace ox {
 		std::cerr << "GLFW Error: " << error << ": " << description << std::endl;
 	}
 
+#ifdef OPENGL_DEBUG_CALLBACK
 	void GLAPIENTRY MessageCallback( GLenum source,
 									 GLenum type,
 									 GLuint id,
@@ -37,6 +38,7 @@ namespace ox {
            ( type == GL_DEBUG_TYPE_ERROR ? "** GL ERROR **" : "" ),
             type, severity, message );
 	}
+#endif
 
 	GameWindow::GameWindow(const WindowDescriptor& descriptor)
 	{
@@ -157,8 +159,10 @@ namespace ox {
 			EventManager::__EmplaceEvent<MouseMovedEvent>((float)xPos, (float)yPos);
 		});
 
+#ifdef OPENGL_DEBUG_CALLBACK
 		glEnable(GL_DEBUG_OUTPUT);
 		glDebugMessageCallback( MessageCallback, 0 );
+#endif
 
 		//Initialize other classes
 		EventManager::__Init();

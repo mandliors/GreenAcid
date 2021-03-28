@@ -39,6 +39,10 @@ workspace "GreenAcid"
 			{
 				"WindowsDependencies/lib"
 			}
+			defines
+			{
+				"WINDOWS"
+			}
 		
 		filter "system:linux"
 			includedirs
@@ -46,6 +50,10 @@ workspace "GreenAcid"
 				"LinuxDependencies/include",
 				"Oxygen/src",
 				"%{wks.name}/src"
+			}
+			defines
+			{
+				"LINUX"
 			}
 
 		filter "system:windows"
